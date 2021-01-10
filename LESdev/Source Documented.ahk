@@ -57,8 +57,16 @@ setmousedelay, -1
 setbatchlines, -1
 #UseHook
 #MaxHotkeysPerInterval 400
-
+#NoEnv
 OnExit, exitfunc
+
+
+;-----------------------------------;
+;		  Neutron stuff	            ;
+;-----------------------------------;
+
+; Include the Neutron library
+#Include ./Neutron.ahk
 
 ;-----------------------------------;
 ;		  Tray menu contents		;
@@ -771,7 +779,7 @@ if (A_PriorHotkey <> "*~RButton" or A_TimeSincePriorHotkey > 400)
 }
 
 Show()
-WinKill, menu launcher
+;WinKill, menu launcher
 return  ;end of script's auto-execute section.
 
 return  ;end of double right click loop
@@ -780,6 +788,10 @@ return  ;end of double right click loop
 ; I singled out just one area on the screen in order to improve performance. 
 ; Image search is actually faster than pixel search, which is why I use 2x2 pixel .pngs to achieve the same goal.
 Show() {
+Global neutron := new NeutronWindow()
+neutron.Load("Simple.html")
+neutron.Gui("-ToolWindow")
+neutron.Gui("-Resize")
 Global pianosearch
 Global dynamicreload
 Global tildestate
@@ -824,7 +836,7 @@ if (pianosearch = 1){
 	if (dynamicreload = 1){
 		gosub, createpluginmenu
 	}
-	Menu, ALmenu, Show, % MX, % MY
+	neutron.Show("x" MX " y" MY " w" 200 " h" 400)
 	}
 }
 
@@ -843,6 +855,9 @@ if GetKeyState("LShift") = 1{
 
 Return
 
+
+	
+Return
 ;-----------------------------------;
 ;		  Hotkeys Mouse		;
 ;-----------------------------------;
