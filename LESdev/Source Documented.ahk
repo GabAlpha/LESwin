@@ -801,7 +801,14 @@ coolvar := ((wHeight/3.5) + wy)
 coolvar2 := (wHeight - 100 + wy)
 coolvar3 := ((wWidth/3.4) + wx)
 if (!MX && !MY)
+; Check if the canvas is too close to the screen borders
 MouseGetPos, MX, MY
+ScreenY = %A_ScreenHeight%
+Sub = 400
+checkOrientation := ScreenY - Sub
+if(MY > checkOrientation){
+	MY := MY - Sub
+}
 if (pianosearch = 1){
 	ImageSearch, x1, y1, (wx + 8), coolvar, coolvar3, coolvar2, %A_ScriptDir%\resources\piano.png
 	;msgbox,0,ha, % "Top left x[" (wx + 8) "] y[" coolvar "] and then bottom right x[" coolvar3 "] y[" coolvar2 "]"
