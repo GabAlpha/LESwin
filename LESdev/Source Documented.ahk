@@ -57,8 +57,20 @@ setmousedelay, -1
 setbatchlines, -1
 #UseHook
 #MaxHotkeysPerInterval 400
-
+#NoEnv
 OnExit, exitfunc
+
+
+;-----------------------------------;
+;		  Neutron stuff	            ;
+;-----------------------------------;
+
+; Include the Neutron library
+#Include ./Neutron.ahk
+Global neutron := new NeutronWindow()
+neutron.Load("Simple.html")
+neutron.Gui("+LastFound +AlwaysOnTop +E0x08000000")
+neutron.Gui("-Resize")
 
 ;-----------------------------------;
 ;		  Tray menu contents		;
@@ -789,7 +801,14 @@ coolvar := ((wHeight/3.5) + wy)
 coolvar2 := (wHeight - 100 + wy)
 coolvar3 := ((wWidth/3.4) + wx)
 if (!MX && !MY)
+; Check if the canvas is too close to the screen borders
 MouseGetPos, MX, MY
+ScreenY = %A_ScreenHeight%
+Sub = 400
+checkOrientation := ScreenY - Sub
+if(MY > checkOrientation){
+	MY := MY - Sub
+}
 if (pianosearch = 1){
 	ImageSearch, x1, y1, (wx + 8), coolvar, coolvar3, coolvar2, %A_ScriptDir%\resources\piano.png
 	;msgbox,0,ha, % "Top left x[" (wx + 8) "] y[" coolvar "] and then bottom right x[" coolvar3 "] y[" coolvar2 "]"
@@ -824,7 +843,7 @@ if (pianosearch = 1){
 	if (dynamicreload = 1){
 		gosub, createpluginmenu
 	}
-	Menu, ALmenu, Show, % MX, % MY
+	neutron.Show("x" MX " y" MY " w" 200 " h" 400 " NoActivate")
 	}
 }
 
@@ -850,6 +869,15 @@ Return
 ; I'm not sure if I'm doing something wrong but this is probably a bug; AHK pease fix?
 ; these are after the double right click routine because it ends the auto execute section of the script.
 ; If they were higher up, the nescesary "Return" would end the auto-execute section of the script early.
+
+; Close HTML menu if the mouse isn't over
+~LButton::
+MouseGetPos,,, Win
+neutronId := neutron.Id()
+if((WinExist("ahk_id" neutronId)) && (Win != neutronId)){
+	neutron.Hide()
+}
+Return
 
 MButton:: 
 	if (middleclicktopan = 1){
