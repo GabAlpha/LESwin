@@ -470,7 +470,6 @@ class NeutronWindow
 	; button's onclick attribute.
 	Close()
 	{
-		;MsgBox, % this.hWnd
 		WinClose, % "ahk_id" this.hWnd
 	}
 	
@@ -486,10 +485,14 @@ class NeutronWindow
 	; button's onclick attribute, or in a custom window close routine.
 	Destroy()
 	{
-		if DllCall("IsZoomed", "UPtr", this.hWnd){
+		if(WinExist("ahk_id" this.hWnd)){
 			Gui, % this.hWnd ":Destroy"
 		}
-		
+	}
+
+	Id()
+	{
+		Return % this.hWnd
 	}
 	
 	; Shows a hidden Neutron window.
