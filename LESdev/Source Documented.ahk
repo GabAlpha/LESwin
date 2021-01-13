@@ -60,6 +60,20 @@ setbatchlines, -1
 
 OnExit, exitfunc
 
+; To add item and relative function 
+; Thanks to: https://www.autohotkey.com/boards/viewtopic.php?f=6&t=76865&hilit=onclick&start=20
+Add(name, call){
+	funcBuilder := "ahk." . call
+	tr := neutron.doc.createElement("tr")
+	td := neutron.doc.createElement("td")
+	td.innerText := name
+	tr.appendChild(td)
+	tr.onclick := ObjBindMethod(neutron.wnd, "eval", funcBuilder . "(event)")
+	if(!InStr(neutron.qs("#table").innerText, name)){
+		neutron.qs("#table").appendChild(tr)
+	}
+}
+
 ;-----------------------------------;
 ;		  Tray menu contents		;
 ;-----------------------------------;
@@ -966,7 +980,9 @@ Loop
 	TestForcontent := SubStr(configoutput, 1)
 	TestForContent := RegExReplace(TestForContent, "Readme", "þ")
 	If (TestForContent = "þ"){ ;checks if line is Readme
-		Menu, ALmenu, Add, Readme, readme
+		;Menu, ALmenu, Add, Readme, readme
+		; IMPORTANT: All callback function must be written with double quotes
+		Add("Readme", "readme")
 		goto, skipalles
 		}
 	TestForContent := SubStr(configoutput, 1)
@@ -1069,6 +1085,7 @@ Loop
 		If (CategoryHeader = 1){
 		Menu, % categoryname[depth], Add, % Array[mathvar], % menuitemcount
 		Menu, % categorydest[depth], Add, % categoryname[depth], % ":" . categoryname[depth]
+		Add(categoryname[depth], "example")
 		}
 		Else{
 		Menu, ALmenu, Add, % Array[mathvar], % menuitemcount
@@ -1285,10 +1302,20 @@ Return
 ; the readme technically isn't a tray menu action, since it's no longer located there. It's now included in the plugin menu to attract more attention.
 ; the marker is still here though because idk where else to put it.
 
-readme:
-SoundPlay, %A_ScriptDir%\resources\readmejingle.wav
-MsgBox, 0, Readme, % "Welcome to the Live Enhancement Suite created by @InvertedSilence & @DylanTallchief 🐦`nDouble right click to open up the custom plug-in menu.`nClick on the LES logo in the menu bar to add your own plug-ins, change settings, and read our manual if you're confused.`nHappy producing : )"
-Return
+;readme:
+;SoundPlay, %A_ScriptDir%\resources\readmejingle.wav
+;MsgBox, 0, Readme, % "Welcome to the Live Enhancement Suite created by @InvertedSilence & @DylanTallchief 🐦`nDouble right click to open up the custom plug-in menu.`nClick on the LES logo in the menu bar to add your own plug-ins, change settings, and read our manual if you're confused.`nHappy producing : )"
+;Return
+
+; All "gosub" action must be written as function to work w/ neutron
+; if you want to close the menu by click you can add neutron.Hide() to the first line
+readme(neutron, event)
+{
+	neutron.Hide()
+	SoundPlay, %A_ScriptDir%\resources\readmejingle.wav
+	MsgBox, 0, Readme, % "Welcome to the Live Enhancement Suite created by @InvertedSilence & @DylanTallchief 🐦`nDouble right click to open up the custom plug-in menu.`nClick on the LES logo in the menu bar to add your own plug-ins, change settings, and read our manual if you're confused.`nHappy producing : )"
+	Return
+}
 
 ;-----------------------------------;
 ;		  Hotkey actions		;
