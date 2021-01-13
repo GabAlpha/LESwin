@@ -258,7 +258,7 @@ class NeutronWindow
 		
 		RegRead, fbe, % this.KEY_FBE, % this.EXE_NAME
 		RegWrite, REG_DWORD, % this.KEY_FBE, % this.EXE_NAME, 0
-		Gui, Add, ActiveX, vwb hWndhWB x0 y0 w800 h600, about:blank
+		Gui, Add, ActiveX, vwb hWndhWB x0 y0, about:blank
 		if (fbe = "")
 			RegDelete, % this.KEY_FBE, % this.EXE_NAME
 		else
@@ -485,7 +485,14 @@ class NeutronWindow
 	; button's onclick attribute, or in a custom window close routine.
 	Destroy()
 	{
-		Gui, % this.hWnd ":Destroy"
+		if(WinExist("ahk_id" this.hWnd)){
+			Gui, % this.hWnd ":Destroy"
+		}
+	}
+
+	Id()
+	{
+		Return % this.hWnd
 	}
 	
 	; Shows a hidden Neutron window.
